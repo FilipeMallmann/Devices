@@ -10,6 +10,7 @@ namespace Devices.Api
             // Add services to the container.
 
             builder.Services.AddControllers();
+            
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
 
@@ -19,6 +20,10 @@ namespace Devices.Api
             if (app.Environment.IsDevelopment())
             {
                 app.MapOpenApi();
+                app.UseSwaggerUI(options =>
+                {
+                    options.SwaggerEndpoint("/openapi/v1.json", "Devices API v1");
+                });
             }
 
             app.UseHttpsRedirection();
