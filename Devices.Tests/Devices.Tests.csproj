@@ -18,7 +18,7 @@
     <ProjectReference Include="..\Devices.Api\Devices.Api.csproj" />
     <ProjectReference Include="..\Devices.Application\Devices.Application.csproj" />
     <ProjectReference Include="..\Devices.Domain\Devices.Domain.csproj" />
-    <ProjectReference Include="..\Devices.Repository\Devices.Repository.csproj" />
+    <ProjectReference Include="..\Devices.Repository\Devices.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

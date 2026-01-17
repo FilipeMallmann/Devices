@@ -1,4 +1,11 @@
 
+using Devices.Domain.Interfaces;
+using Devices.Infrastructure.Db;
+using Devices.Infrastructure.Repositorys;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using System;
+
 namespace Devices.Api
 {
     public class Program
@@ -10,8 +17,15 @@ namespace Devices.Api
             // Add services to the container.
 
             builder.Services.AddControllers();
-            
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+            var cs = builder.Configuration.GetConnectionString("DefaultConnection")
+                     ?? throw new System.InvalidOperationException("DefaultConnection not configured");
+
+            builder.Services.AddDbContext<DevicesDbContext>(options =>
+                options.UseSqlServer(cs));
+
+            builder.Services.AddScoped<IDeviceRepository, DeviceRepository>();
+
+
             builder.Services.AddOpenApi();
 
             var app = builder.Build();

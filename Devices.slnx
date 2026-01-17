@@ -2,6 +2,6 @@
   <Project Path="Devices.Api/Devices.Api.csproj" />
   <Project Path="Devices.Application/Devices.Application.csproj" />
   <Project Path="Devices.Domain/Devices.Domain.csproj" />
-  <Project Path="Devices.Repository/Devices.Repository.csproj" />
+  <Project Path="Devices.Repository/Devices.Infrastructure.csproj" />
   <Project Path="Devices.Tests/Devices.Tests.csproj" />
 </Solution>
