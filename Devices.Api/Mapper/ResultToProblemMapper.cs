@@ -17,14 +17,16 @@ namespace Devices.Api.Mapper
             return result.ToProblemActionResult<T>();
         }
 
-        //public static IActionResult ToActionResult(
-        //    this ResultWrapper result)
-        //{
-        //    if (result.IsSuccess)
-        //        return new NoContentResult();
-
-        //    return result.ToProblemActionResult();
-        //}
+        public static IActionResult ToActionResult(
+            this ResultWrapper result)
+        {
+            if (result.IsSuccess) return new OkResult();
+            var problem = ToProblemDetails(result.Error!);
+            return new ObjectResult(problem)
+            {
+                StatusCode = problem.Status
+            };
+        }
 
         private static IActionResult ToProblemActionResult<T>(
             this ResultWrapper<T> result)

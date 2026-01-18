@@ -28,23 +28,21 @@ namespace Devices.Api.Controllers
             return  (await _deviceServices.ListAsync(ct)).ToActionResult();
         }
 
-        [HttpGet("{id:guid}")]
+        [HttpGet("GetById/{id:guid}", Name = "GetById")]
         public async Task<IActionResult> GetById([FromRoute] Guid id, CancellationToken ct)
         {
-            _logger.LogInformation("GetDeviceById endpoint called for id {Id}.", id);
+            _logger.LogInformation("GetById endpoint called for id {Id}.", id);
            return (await _deviceServices.GetByIdAsync(id, ct)).ToActionResult(); 
         }
         
-        [HttpGet("{brand}")]
-        [Route("ByBrand/{brand}")]
+        [HttpGet("ByBrand/{brand}", Name = "GetByBrand")]
         public async Task<IActionResult> GetByBrand([FromRoute] string brand, CancellationToken ct)
         {
             _logger.LogInformation("GetByBrand endpoint called for brand {brand}.", brand);
            return  (await _deviceServices.ListByBrandAsync(brand, ct)).ToActionResult();
         }
 
-        [HttpGet("{state:int}")]
-        [Route("ByState/{state}")]
+        [HttpGet("ByState/{state:int}", Name = "GetByState")]
         public async Task<IActionResult> GetByState([FromRoute] int state, CancellationToken ct)
         {
             _logger.LogInformation("GetByState endpoint called for state {state}.", state);
@@ -63,14 +61,9 @@ namespace Devices.Api.Controllers
         public async Task<ActionResult<DeviceModel>> Create([FromBody] DeviceModel device, CancellationToken ct)
         {
             if (device is null) return BadRequest();
-
-            device.Id = Guid.NewGuid();
-            device.CreationTime = DateTime.UtcNow;
-
             await _deviceServices.AddAsync(device, ct);
-
             _logger.LogInformation("Created device with id {Id}.", device.Id);
-            return CreatedAtRoute("GetDeviceById", new { id = device.Id }, device);
+            return CreatedAtRoute("GetById", new { id = device.Id }, device);
         }
 
         /// <summary>
@@ -86,41 +79,19 @@ namespace Devices.Api.Controllers
         [HttpPatch("{id:guid}")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateDevicePatchDto device, CancellationToken ct)
         {
-            if (device is null) return BadRequest();
-
-            var existing = await _deviceServices.GetByIdAsync(id, ct);
-            if (existing is null) return NotFound();
-
-            //if (device.State.HasValue)
-            //{
-            //    existing.State = device.State.Value;
-            //}
-            //if (device.Name is not null)
-            //{
-            //    existing.Name = device.Name;
-            //}
-            //if (device.Brand is not null)
-            //{
-            //    existing.Brand = device.Brand;
-            //}
-
-            await _deviceServices.UpdateAsync(existing.Value, ct);
-
-            _logger.LogInformation("Updated device with id {Id}.", id);
-            return NoContent();
+            var result = await _deviceServices.UpdateAsync(id, device, ct);
+            if (result.IsSuccess) _logger.LogInformation("Updated device with id {Id}.", id);
+            return result.ToActionResult();
         }
 
         // DELETE /Device/{id}
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete([FromRoute] Guid id, CancellationToken ct)
         {
-            var existing = await _deviceServices.GetByIdAsync(id, ct);
-            if (existing is null) return NotFound();
+            var result = await _deviceServices.DeleteAsync(id, ct);
+            if (result.IsSuccess) _logger.LogInformation("Deleted device with id {Id}.", id);
 
-            await _deviceServices.DeleteAsync(id, ct);
-
-            _logger.LogInformation("Deleted device with id {Id}.", id);
-            return NoContent();
+            return result.ToActionResult();
         }
     }
 }
