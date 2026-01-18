@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Devices.Domain;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Devices.Domain.Interfaces
+namespace Devices.Application.Interfaces
 {
-    public interface IDeviceRepository
+    public interface IDeviceServices
     {
         Task AddAsync(DeviceModel device, CancellationToken ct = default);
 
@@ -15,6 +16,5 @@ namespace Devices.Domain.Interfaces
         Task<IEnumerable<DeviceModel>> ListAsync(CancellationToken ct = default);
 
         Task UpdateAsync(DeviceModel device, CancellationToken ct = default);
-
     }
 }
