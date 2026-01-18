@@ -1,4 +1,5 @@
-﻿using Devices.Application.Interfaces;
+﻿using Devices.Application.Dtos.Device;
+using Devices.Application.Interfaces;
 using Devices.Domain;
 using Devices.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +19,6 @@ namespace Devices.Api.Controllers
             _deviceServices = deviceServices ?? throw new ArgumentNullException(nameof(deviceServices));
         }
 
-        // GET /Device
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DeviceModel>>> GetAll(CancellationToken ct)
         {
@@ -28,7 +28,7 @@ namespace Devices.Api.Controllers
         }
 
         // GET /Device/{id}
-        [HttpGet("{id:guid}", Name = "GetDeviceById")]
+        [HttpGet("{id:guid}")]
         public async Task<ActionResult<DeviceModel>> GetById([FromRoute] Guid id, CancellationToken ct)
         {
             _logger.LogInformation("GetDeviceById endpoint called for id {Id}.", id);
@@ -57,19 +57,38 @@ namespace Devices.Api.Controllers
             return CreatedAtRoute("GetDeviceById", new { id = device.Id }, device);
         }
 
-        // PATCH /Device/{id}
+        /// <summary>
+        /// Updates the specified device with the provided changes.
+        /// </summary>
+        /// <param name="id">The unique identifier of the device to update.</param>
+        /// <param name="device">An object containing the fields to update for the device. Fields that are null or not set will be left
+        /// unchanged.</param>
+        /// <param name="ct">A cancellation token that can be used to cancel the operation.</param>
+        /// <returns>An <see cref="IActionResult"/> indicating the result of the update operation. Returns <see
+        /// cref="NoContentResult"/> if the update is successful, <see cref="NotFoundResult"/> if the device does not
+        /// exist, or <see cref="BadRequestResult"/> if the input is invalid.</returns>
         [HttpPatch("{id:guid}")]
-        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] DeviceModel device, CancellationToken ct)
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateDevicePatchDto device, CancellationToken ct)
         {
             if (device is null) return BadRequest();
 
             var existing = await _deviceServices.GetByIdAsync(id, ct);
             if (existing is null) return NotFound();
 
-            device.Id = id;
-            device.CreationTime = existing.CreationTime; // preserve original creation time
+            if (device.State.HasValue)
+            {
+                existing.State = device.State.Value;
+            }
+            if (device.Name is not null)
+            {
+                existing.Name = device.Name;
+            }
+            if (device.Brand is not null)
+            {
+                existing.Brand = device.Brand;
+            }
 
-            await _deviceServices.UpdateAsync(device, ct);
+            await _deviceServices.UpdateAsync(existing, ct);
 
             _logger.LogInformation("Updated device with id {Id}.", id);
             return NoContent();

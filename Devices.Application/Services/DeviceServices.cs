@@ -29,7 +29,11 @@ namespace Devices.Application.Services
             => _repository.ListAsync(ct);
 
         public Task UpdateAsync(DeviceModel device, CancellationToken ct = default)
-            => _repository.UpdateAsync(device, ct);
+        {
+            
+            return _repository.UpdateAsync(device, ct);
+
+        }
 
     }
 }
