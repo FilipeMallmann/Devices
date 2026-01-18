@@ -1,4 +1,6 @@
 
+using Devices.Application.Interfaces;
+using Devices.Application.Services;
 using Devices.Domain.Interfaces;
 using Devices.Infrastructure.Db;
 using Devices.Infrastructure.Repositorys;
@@ -22,10 +24,9 @@ namespace Devices.Api
 
             builder.Services.AddDbContext<DevicesDbContext>(options =>
                 options.UseSqlServer(cs));
-
             builder.Services.AddScoped<IDeviceRepository, DeviceRepository>();
 
-
+            builder.Services.AddScoped<IDeviceServices, DeviceServices>();
             builder.Services.AddOpenApi();
 
             var app = builder.Build();
