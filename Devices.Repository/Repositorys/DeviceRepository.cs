@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using static Devices.Domain.Enums;
 
 namespace Devices.Infrastructure.Repositorys
 {
@@ -32,9 +33,18 @@ namespace Devices.Infrastructure.Repositorys
 
         public async Task<DeviceModel?> GetByIdAsync(Guid id, CancellationToken ct = default)
         {
-            var devices = _db.Devices.ToList();
-
             return await _db.Devices.AsNoTracking().FirstOrDefaultAsync(d => d.Id == id, ct);
+        }
+
+        public async Task<IEnumerable<DeviceModel>> ListByBrandAsync(string brand, CancellationToken ct = default)
+        {
+            var devices =  await _db.Devices.AsNoTracking().Where(w => w.Brand.Equals(brand)).ToListAsync(ct);
+            return devices;
+        }
+        public async Task<IEnumerable<DeviceModel>> ListByStateAsync(int state, CancellationToken ct = default)
+        {
+            var devices = await _db.Devices.AsNoTracking().Where(w => w.State == (DeviceState)state).ToListAsync(ct);
+            return devices;
         }
 
         public async Task<IEnumerable<DeviceModel>> ListAsync(CancellationToken ct = default)

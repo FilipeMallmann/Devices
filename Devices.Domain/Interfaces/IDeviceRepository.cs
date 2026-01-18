@@ -15,6 +15,8 @@ namespace Devices.Domain.Interfaces
         Task<IEnumerable<DeviceModel>> ListAsync(CancellationToken ct = default);
 
         Task UpdateAsync(DeviceModel device, CancellationToken ct = default);
+        Task<IEnumerable<DeviceModel>> ListByBrandAsync(string brand, CancellationToken ct = default);
+        Task<IEnumerable<DeviceModel>> ListByStateAsync(int state, CancellationToken ct = default);
 
     }
 }

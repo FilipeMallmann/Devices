@@ -1,4 +1,6 @@
-﻿using Devices.Application.Dtos.Device;
+﻿using Devices.Api.Mapper;
+using Devices.Application.Common;
+using Devices.Application.Dtos.Device;
 using Devices.Application.Interfaces;
 using Devices.Domain;
 using Devices.Domain.Interfaces;
@@ -20,22 +22,36 @@ namespace Devices.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<DeviceModel>>> GetAll(CancellationToken ct)
+        public async Task<IActionResult> GetAll(CancellationToken ct)
         {
             _logger.LogInformation("GetAll devices endpoint called.");
-            var devices = await _deviceServices.ListAsync(ct);
-            return Ok(devices);
+            return  (await _deviceServices.ListAsync(ct)).ToActionResult();
         }
 
-        // GET /Device/{id}
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<DeviceModel>> GetById([FromRoute] Guid id, CancellationToken ct)
+        public async Task<IActionResult> GetById([FromRoute] Guid id, CancellationToken ct)
         {
             _logger.LogInformation("GetDeviceById endpoint called for id {Id}.", id);
-            var device = await _deviceServices.GetByIdAsync(id, ct);
-            if (device is null) return NotFound();
-            return Ok(device);
+           return (await _deviceServices.GetByIdAsync(id, ct)).ToActionResult(); 
         }
+        
+        [HttpGet("{brand}")]
+        [Route("ByBrand/{brand}")]
+        public async Task<IActionResult> GetByBrand([FromRoute] string brand, CancellationToken ct)
+        {
+            _logger.LogInformation("GetByBrand endpoint called for brand {brand}.", brand);
+           return  (await _deviceServices.ListByBrandAsync(brand, ct)).ToActionResult();
+        }
+
+        [HttpGet("{state:int}")]
+        [Route("ByState/{state}")]
+        public async Task<IActionResult> GetByState([FromRoute] int state, CancellationToken ct)
+        {
+            _logger.LogInformation("GetByState endpoint called for state {state}.", state);
+           return (await _deviceServices.ListByStateAsync(state, ct)).ToActionResult();
+        }
+
+
 
         /// <summary>
         /// Create a new device
@@ -75,20 +91,20 @@ namespace Devices.Api.Controllers
             var existing = await _deviceServices.GetByIdAsync(id, ct);
             if (existing is null) return NotFound();
 
-            if (device.State.HasValue)
-            {
-                existing.State = device.State.Value;
-            }
-            if (device.Name is not null)
-            {
-                existing.Name = device.Name;
-            }
-            if (device.Brand is not null)
-            {
-                existing.Brand = device.Brand;
-            }
+            //if (device.State.HasValue)
+            //{
+            //    existing.State = device.State.Value;
+            //}
+            //if (device.Name is not null)
+            //{
+            //    existing.Name = device.Name;
+            //}
+            //if (device.Brand is not null)
+            //{
+            //    existing.Brand = device.Brand;
+            //}
 
-            await _deviceServices.UpdateAsync(existing, ct);
+            await _deviceServices.UpdateAsync(existing.Value, ct);
 
             _logger.LogInformation("Updated device with id {Id}.", id);
             return NoContent();

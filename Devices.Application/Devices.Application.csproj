@@ -11,8 +11,4 @@
     <ProjectReference Include="..\Devices.Repository\Devices.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Common\" />
-  </ItemGroup>
-
 </Project>
