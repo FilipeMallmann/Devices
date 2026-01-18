@@ -58,10 +58,17 @@ namespace Devices.Tests.UnitTests
         }
 
         [Fact]
-        public async Task AddAsync_WithNullDevice_ThrowsArgumentNullException()
+        public async Task AddAsync_WithNullDevice_ReturnsFailureWithValidationError()
         {
-            // Act & Assert
-            await Assert.ThrowsAsync<ArgumentNullException>(() => _sut.AddAsync(null!));
+
+            // Act
+            var result = await _sut.AddAsync(null!);
+
+            // Assert
+            result.IsSuccess.Should().BeFalse();
+            result.Error.Should().NotBeNull();
+            result.Error!.Code.Should().Be("InvalidInput");
+            result.Error!.Type.Should().Be(ErrorType.Validation);
         }
 
         [Fact]
