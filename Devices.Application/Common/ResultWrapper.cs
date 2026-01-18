@@ -42,7 +42,6 @@ namespace Devices.Application.Common
     public class ResultWrapper
     {
         public bool IsSuccess { get; }
-        public bool IsFailure => !IsSuccess;
         public Error? Error { get; }
 
         protected ResultWrapper(bool isSuccess, Error? error)

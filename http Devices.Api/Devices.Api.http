@@ -1,0 +1,24 @@
+@Devices.Api_HostAddress = http://localhost:5134
+@sample_id = 00000000-0000-0000-0000-000000000000
+@sample_brand = Samsung
+@sample_state = 1
+
+### Get all devices
+GET {{Devices.Api_HostAddress}}/Device
+Accept: application/json
+
+###
+# Get device by id
+# Replace {{sample_id}} with a valid GUID
+GET {{Devices.Api_HostAddress}}/Device/GetById/{{sample_id}}
+Accept: application/json
+
+###
+# Get devices by brand
+GET {{Devices.Api_HostAddress}}/Device/ByBrand/{{sample_brand}}
+Accept: application/json
+
+###
+# Get devices by state (integer value of DeviceState)
+GET {{Devices.Api_HostAddress}}/Device/ByState/{{sample_state}}
+Accept: application/json
