@@ -1,4 +1,5 @@
 
+using Devices.Api.Mapper;
 using Devices.Application.Interfaces;
 using Devices.Application.Services;
 using Devices.Domain.Interfaces;
@@ -18,7 +19,6 @@ namespace Devices.Api
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
 
             builder.Services.AddControllers();
             var cs = builder.Configuration.GetConnectionString("DefaultConnection")
@@ -56,6 +56,7 @@ namespace Devices.Api
             if (app.Environment.IsDevelopment())
             {
                 app.MapOpenApi();
+                app.ApplyMigrations();
                 app.UseSwaggerUI(options =>
                 {
                     options.SwaggerEndpoint("/openapi/v1.json", "Devices API v1");
