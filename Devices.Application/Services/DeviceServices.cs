@@ -107,7 +107,8 @@ namespace Devices.Application.Services
                 return ResultWrapper<IEnumerable<DeviceModel>>.Failure(new Error("NotFound", $"Device with Id {id} was not found.", ErrorType.NotFound));
             }
 
-            if (device.Name is not null)
+
+            if (device.Name is not null && (device.Name != existing.Name))
             {
                 if (existing.State == Enums.DeviceState.InUse)
                 {
@@ -115,7 +116,7 @@ namespace Devices.Application.Services
                 }
                 existing.Name = device.Name;
             }
-            if (device.Brand is not null)
+            if (device.Brand is not null && (device.Brand != existing.Brand))
             {
                 if (existing.State == Enums.DeviceState.InUse)
                 {
