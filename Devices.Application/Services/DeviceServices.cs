@@ -18,16 +18,17 @@ namespace Devices.Application.Services
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
-        public async Task AddAsync(DeviceModel device, CancellationToken ct = default)
+        public async Task<ResultWrapper> AddAsync(DeviceModel device, CancellationToken ct = default)
         {
             if (device is null)
             {
-                throw new ArgumentNullException(nameof(device));
+                return ResultWrapper.Failure(new Error("InvalidInput", "Device model cannot be null.", ErrorType.Validation));
             }
             device.Id = Guid.NewGuid();
             device.CreationTime = DateTime.UtcNow;
 
             await _repository.AddAsync(device, ct);
+            return ResultWrapper.Success();
         }
 
         public async Task<ResultWrapper> DeleteAsync(Guid id, CancellationToken ct = default)
@@ -106,7 +107,8 @@ namespace Devices.Application.Services
                 return ResultWrapper<IEnumerable<DeviceModel>>.Failure(new Error("NotFound", $"Device with Id {id} was not found.", ErrorType.NotFound));
             }
 
-            if (device.Name is not null)
+
+            if (device.Name is not null && (device.Name != existing.Name))
             {
                 if (existing.State == Enums.DeviceState.InUse)
                 {
@@ -114,7 +116,7 @@ namespace Devices.Application.Services
                 }
                 existing.Name = device.Name;
             }
-            if (device.Brand is not null)
+            if (device.Brand is not null && (device.Brand != existing.Brand))
             {
                 if (existing.State == Enums.DeviceState.InUse)
                 {
