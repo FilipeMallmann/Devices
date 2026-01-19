@@ -1,0 +1,25 @@
+services:
+  devices.db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: devices_db
+    ports:
+      - "1433:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Your_password123
+    volumes:
+        - ./data/devicesdb:/var/opt/mssql/data
+  
+  devices.api:
+    image: ${DOCKER_REGISTRY-}devicesapi
+    container_name: devices_api
+    depends_on:
+      - devices.db
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=devices_db,1433;Database=DevicesDb;User Id=sa;Password=Your_password123;Encrypt=False;TrustServerCertificate=True; 
+    ports:
+      - "5000:8080"
+      - "5001:8081"
+    build:
+      context: .
+      dockerfile: Devices.Api/Dockerfile

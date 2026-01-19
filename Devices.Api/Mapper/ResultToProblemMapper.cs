@@ -8,6 +8,11 @@ namespace Devices.Api.Mapper
 {
     public static class ResultToProblemDetailsMapperExtensions
     {
+        public static void dAa()
+        {
+
+        }
+
         public static IActionResult ToActionResult<T>(
             this ResultWrapper<T> result)
         {
