@@ -3,11 +3,26 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Devices.Application.Common;
+using Microsoft.EntityFrameworkCore;
 
 namespace Devices.Api.Mapper
 {
+
+
+    public static class MigrationsExtensions
+    {
+        public static void ApplyMigrations(this IApplicationBuilder app)
+        {
+            using var scope = app.ApplicationServices.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<Devices.Infrastructure.Db.DevicesDbContext>();
+            dbContext.Database.Migrate();
+        }
+    }
+
+
     public static class ResultToProblemDetailsMapperExtensions
     {
+
         public static IActionResult ToActionResult<T>(
             this ResultWrapper<T> result)
         {

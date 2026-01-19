@@ -4,4 +4,7 @@
   <Project Path="Devices.Domain/Devices.Domain.csproj" />
   <Project Path="Devices.Repository/Devices.Infrastructure.csproj" />
   <Project Path="Devices.Tests/Devices.Tests.csproj" />
+  <Project Path="docker-compose.dcproj">
+    <Build />
+  </Project>
 </Solution>

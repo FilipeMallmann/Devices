@@ -9,7 +9,7 @@ namespace Devices.Application.Interfaces
 {
     public interface IDeviceServices
     {
-        Task AddAsync(DeviceModel device, CancellationToken ct = default);
+        Task<ResultWrapper> AddAsync(DeviceModel device, CancellationToken ct = default);
         Task<ResultWrapper> DeleteAsync(Guid id, CancellationToken ct = default);
         Task<ResultWrapper> UpdateAsync(Guid id, UpdateDevicePatchDto device, CancellationToken ct = default);
 

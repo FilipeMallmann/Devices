@@ -18,16 +18,17 @@ namespace Devices.Application.Services
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
-        public async Task AddAsync(DeviceModel device, CancellationToken ct = default)
+        public async Task<ResultWrapper> AddAsync(DeviceModel device, CancellationToken ct = default)
         {
             if (device is null)
             {
-                throw new ArgumentNullException(nameof(device));
+                return ResultWrapper.Failure(new Error("InvalidInput", "Device model cannot be null.", ErrorType.Validation));
             }
             device.Id = Guid.NewGuid();
             device.CreationTime = DateTime.UtcNow;
 
             await _repository.AddAsync(device, ct);
+            return ResultWrapper.Success();
         }
 
         public async Task<ResultWrapper> DeleteAsync(Guid id, CancellationToken ct = default)
